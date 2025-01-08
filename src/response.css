@@ -1,0 +1,13 @@
+code {
+    background-color: #242424;
+    padding: 4px;
+    color: white;
+    border-radius: 5px;
+}
+
+.response {
+    background-color: #282828;
+    color: white;
+    padding: 4px;
+    border-radius: 10px;
+}
