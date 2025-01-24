@@ -6,6 +6,14 @@ pre {
   @apply bg-[#242424] p-1 rounded-md text-white w-[1000px]
 }
 
+code {
+  @apply rounded-md
+}
+
 ul {
   @apply list-disc list-inside ml-3
+}
+
+.model-btn {
+  @apply w-96 text-center
 }
