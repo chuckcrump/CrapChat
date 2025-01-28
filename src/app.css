@@ -3,17 +3,25 @@
 @tailwind utilities;
 
 pre {
-  @apply bg-[#242424] p-1 rounded-md text-white w-[1000px]
+  @apply bg-[#c1c4c9] p-1 rounded-xl text-white w-full;
 }
 
 code {
-  @apply rounded-md
+  @apply rounded-xl;
 }
 
 ul {
-  @apply list-disc list-inside ml-3
+  @apply list-disc list-inside ml-3;
 }
 
 .model-btn {
-  @apply w-96 text-center
+  @apply w-96 text-center;
+}
+
+.ollamaRes {
+  @apply bg-gray-300 p-2 rounded-2xl rounded-bl-md text-gray-700 m-1 w-fit max-w-[75%];
+}
+
+.copyButton {
+  @apply flex items-center justify-center p-[2px] py-[1px] m-[2px] rounded-md ml-auto mr-1;
 }

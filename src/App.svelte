@@ -25,12 +25,6 @@
   //conversations
   let history: any[] = [];
 
-  //const renderer = new marked.Renderer();
-  //renderer.code = function(code: string, language: string | undefined, isEscaped: boolean) {
-  //  const valLang = language && hljs.getLanguage(language) ? language : "plaintext";
-  //  return `<pre><code class="hljs ${valLang}">${hljs.highlightAuto(code, [valLang]).value}</code></pre>`;
-  //}
-
   const marked = new Marked(
     markedHighlight({
       emptyLangClass: "hljs",
@@ -44,28 +38,20 @@
 
   let htmlContent = marked.parse(theMessage);
 
-
   function addPrompt() {
     if (prompt === '') {
       alert('prompt cannot be empty');
       return;
     }
 
-    chatMessage = {
-      role: 'user',
-      userContent: prompt
-    }
-
-    responses = [...responses, chatMessage];
+    responses.push({role: "user", content: prompt})
   }
 
   //get and format ollama response
-
   function addCopy() {
     const pre = document.querySelectorAll("pre")
 
     pre.forEach(pre => {
-
       const button = document.createElement("button")
 
       let isCopied = false
@@ -73,8 +59,8 @@
       const updateBtn = () => {
         button.textContent = isCopied ? "Copied!" : "Copy"
 
-        button.className = isCopied ? `flex items-center justify-center bg-green-500 p-[1px] m-[2px] rounded-md ml-auto mr-1` :
-        `flex items-center justify-center bg-blue-500 p-[1px] m-[2px] rounded-md ml-auto mr-1`
+        button.className = isCopied ? `copyButton bg-green-500` :
+        `copyButton bg-blue-500`
       }
 
       updateBtn()
@@ -83,9 +69,8 @@
         isCopied = true
         updateBtn()
         const content = pre.querySelector("code")?.innerText;
-        navigator.clipboard.writeText(content)
+        navigator.clipboard.writeText(content ? content : '')
       })
-
       pre.style.position = "realtive";
       button.style.position = "flex"
       pre.appendChild(button)
@@ -105,8 +90,9 @@
         modelWarn = true;  
         return;
       }
-
+    
       addPrompt();
+      responses = responses
 
       theMessage = '';
       showResponse = true;
@@ -115,32 +101,23 @@
       removeBtn();
 
       const message = { role: 'user', content: prompt }
-      const response = await ollama.chat({ model: currentModel, messages: [message], stream: true })
+      const response = await ollama.chat({ model: currentModel, messages: responses, stream: true })
       for await (const part of response) {
-        theMessage = theMessage + part.message.content;
+        theMessage += part.message.content;
         htmlContent = marked.parse(theMessage);
       }
 
       setTimeout(() => {
         addCopy()
-      }, 100)
-      //setTimeout(() => {
-      //  document.querySelectorAll('code').forEach((block) => {
-      //    hljs.highlightElement(block as HTMLElement)
-      //  });
-      //  addCopy()
-      //}, 100)
+      }, 50)
 
-      chatMessage = {
-      role: 'ollama',
-      ollamaContent: theMessage
-      }
-
-      responses = [...responses, chatMessage ];
+      responses.push({role: "assistant", content: theMessage})
+      responses = responses
       theMessage = '';
       isGenerating = false;
       showResponse = false;
       prompt = ""
+      console.log(responses)
   }
 
   let modelNames: string[] = [];
@@ -172,10 +149,7 @@
     responses = [];
     currentModel = '';
   }
-
-  const contents = responses.map(responses => responses.content)
-  console.log(contents)
-
+  
   onMount(() => {
       ollamaModels();
       hljs.configure({ignoreUnescapedHTML: true})
@@ -263,17 +237,17 @@ responses={responses}
 
 </div>
 
-{#each responses as responses}
-  {#if responses.role === 'user'}
-    <p class="bg-[#242424] p-2 rounded-lg text-white m-1 text-right">{responses.userContent}</p>
-  {:else if responses.role === 'ollama'}
-    <p class="bg-[#282828] p-2 rounded-lg text-white m-1">{@html marked.parse(responses.ollamaContent)}</p>
+{#each responses as response}
+  {#if response.role === 'user'}
+    <p class="bg-gray-300 w-fit ml-auto p-2 rounded-2xl rounded-br-md text-gray-700 m-1 text-right">{response.content}</p>
+  {:else if response.role === 'assistant'}
+    <p class="ollamaRes">{@html marked.parse(response.content)}</p>
   {/if}
 {/each}
 
 {#if showResponse === true} 
     {#if htmlContent}
-    <div class="bg-[#282828] p-2 rounded-lg text-white m-1">
+    <div class="ollamaRes">
         {@html htmlContent}
     </div>
     {:else}
