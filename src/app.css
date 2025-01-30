@@ -19,7 +19,7 @@ ul {
 }
 
 .ollamaRes {
-  @apply bg-gray-300 p-2 rounded-2xl rounded-bl-md text-gray-700 m-1 w-fit max-w-[75%];
+  @apply bg-gray-300 p-3 rounded-2xl rounded-bl-md text-gray-700 m-2 w-fit max-w-[75%];
 }
 
 .copyButton {

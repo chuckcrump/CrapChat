@@ -239,7 +239,7 @@ responses={responses}
 
 {#each responses as response}
   {#if response.role === 'user'}
-    <p class="bg-gray-300 w-fit ml-auto p-2 rounded-2xl rounded-br-md text-gray-700 m-1 text-right">{response.content}</p>
+    <p class="bg-gray-300 w-fit ml-auto p-3 rounded-2xl rounded-br-md text-gray-700 m-2 text-right">{response.content}</p>
   {:else if response.role === 'assistant'}
     <p class="ollamaRes">{@html marked.parse(response.content)}</p>
   {/if}
